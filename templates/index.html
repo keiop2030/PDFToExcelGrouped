@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Home - PDF to Excel Grouped{% endblock %}
+
+{% block content %}
+<div class="row mt-5">
+    <div class="col-md-8 mx-auto text-center">
+        <h1 class="display-4">Welcome to PDF to Excel Grouped</h1>
+        <p class="lead mt-4">Convert your bank PDFs into organized Excel spreadsheets grouped by GAAP type of expenses.</p>
+        
+        {% if current_user.is_authenticated %}
+            <div class="mt-5">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-lg">Go to Dashboard</a>
+            </div>
+        {% else %}
+            <div class="mt-5">
+                <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg me-3">Get Started - 30 Days Free</a>
+                <a href="{{ url_for('login') }}" class="btn btn-outline-primary btn-lg">Login</a>
+            </div>
+            
+            <div class="mt-5">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title">Features</h3>
+                        <ul class="list-unstyled mt-4">
+                            <li class="mb-3">✓ Convert bank PDFs to Excel format</li>
+                            <li class="mb-3">✓ Automatic grouping by GAAP expense types</li>
+                            <li class="mb-3">✓ 30-day free trial for new users</li>
+                            <li class="mb-3">✓ $30/month subscription after trial</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

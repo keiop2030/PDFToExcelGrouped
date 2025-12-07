@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Subscribe - PDF to Excel Grouped{% endblock %}
+
+{% block extra_head %}
+<script src="https://js.stripe.com/v3/"></script>
+{% endblock %}
+
+{% block content %}
+<div class="row mt-5">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">Subscribe to Continue</h2>
+                
+                <div class="text-center mb-4">
+                    <h3 class="display-4">${{ subscription_amount }}</h3>
+                    <p class="text-muted">per month</p>
+                </div>
+                
+                <div class="alert alert-info">
+                    <strong>What's included:</strong>
+                    <ul class="mt-2">
+                        <li>Unlimited PDF to Excel conversions</li>
+                        <li>Automatic GAAP expense grouping</li>
+                        <li>Priority support</li>
+                        <li>Cancel anytime</li>
+                    </ul>
+                </div>
+                
+                <div class="d-grid">
+                    <button id="checkout-button" class="btn btn-primary btn-lg">
+                        Subscribe Now
+                    </button>
+                </div>
+                
+                <p class="text-center text-muted mt-4">
+                    <small>Secure payment processed by Stripe. You can cancel your subscription at any time.</small>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const stripe = Stripe('{{ stripe_public_key }}');
+    const checkoutButton = document.getElementById('checkout-button');
+    
+    checkoutButton.addEventListener('click', async () => {
+        checkoutButton.disabled = true;
+        checkoutButton.textContent = 'Processing...';
+        
+        try {
+            const response = await fetch('{{ url_for("create_checkout_session") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            
+            const session = await response.json();
+            
+            if (session.error) {
+                alert('Error: ' + session.error);
+                checkoutButton.disabled = false;
+                checkoutButton.textContent = 'Subscribe Now';
+                return;
+            }
+            
+            const result = await stripe.redirectToCheckout({
+                sessionId: session.id
+            });
+            
+            if (result.error) {
+                alert('Error: ' + result.error.message);
+                checkoutButton.disabled = false;
+                checkoutButton.textContent = 'Subscribe Now';
+            }
+        } catch (error) {
+            alert('Error: ' + error.message);
+            checkoutButton.disabled = false;
+            checkoutButton.textContent = 'Subscribe Now';
+        }
+    });
+</script>
+{% endblock %}

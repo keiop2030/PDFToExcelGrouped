@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - PDF to Excel Grouped{% endblock %}
+
+{% block content %}
+<div class="row mt-5">
+    <div class="col-md-10 mx-auto">
+        <h1 class="mb-4">Dashboard</h1>
+        
+        {% if current_user.subscription_status == 'active' %}
+            <div class="alert alert-success">
+                <strong>Active Subscription</strong> - Your account is active and in good standing.
+            </div>
+        {% elif days_remaining > 0 %}
+            <div class="alert alert-info">
+                <strong>Free Trial</strong> - You have {{ days_remaining }} days remaining in your free trial.
+                {% if days_remaining <= 7 %}
+                    <a href="{{ url_for('subscribe') }}" class="alert-link">Subscribe now</a> to continue using the service after your trial ends.
+                {% endif %}
+            </div>
+        {% endif %}
+        
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Account Information</h5>
+                        <p class="mb-2"><strong>Email:</strong> {{ current_user.email }}</p>
+                        <p class="mb-2"><strong>Account Age:</strong> {{ current_user.account_age_days() }} days</p>
+                        <p class="mb-2">
+                            <strong>Subscription Status:</strong> 
+                            {% if current_user.subscription_status == 'active' %}
+                                <span class="badge bg-success">Active</span>
+                            {% elif days_remaining > 0 %}
+                                <span class="badge bg-info">Free Trial</span>
+                            {% else %}
+                                <span class="badge bg-warning">Inactive</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Quick Actions</h5>
+                        <div class="d-grid gap-2">
+                            {% if not current_user.subscription_status or current_user.subscription_status != 'active' %}
+                                <a href="{{ url_for('subscribe') }}" class="btn btn-primary">Subscribe Now - $30/month</a>
+                            {% endif %}
+                            <a href="{{ url_for('account') }}" class="btn btn-outline-primary">Manage Account</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">PDF to Excel Conversion</h5>
+                        <p>This is where the PDF to Excel conversion functionality would be implemented.</p>
+                        <p class="text-muted">Upload your bank PDFs here and convert them to organized Excel spreadsheets grouped by GAAP expense types.</p>
+                        <button class="btn btn-success" disabled>Upload PDF (Feature Coming Soon)</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
