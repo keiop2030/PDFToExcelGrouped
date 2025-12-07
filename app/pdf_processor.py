@@ -2,7 +2,6 @@ import pdfplumber
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment
 from difflib import SequenceMatcher
-from collections import defaultdict
 import os
 
 class PDFProcessor:

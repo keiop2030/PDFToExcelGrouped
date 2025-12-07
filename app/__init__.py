@@ -10,6 +10,7 @@ def create_app():
     app = Flask(__name__)
     
     # Configuration
+    # NOTE: In production, always set SECRET_KEY environment variable with a secure random key
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///pdftoexcel.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False

@@ -201,12 +201,36 @@ The application uses the following default configuration:
 - **Max File Size**: 16MB
 - **Secret Key**: Set via environment variable `SECRET_KEY` (default: dev-secret-key-change-in-production)
 
+## Production Deployment
+
+For production deployments, ensure the following:
+
+1. **Set a secure SECRET_KEY**: 
+   ```bash
+   export SECRET_KEY=$(python -c 'import secrets; print(secrets.token_hex(32))')
+   ```
+
+2. **Use a production WSGI server** (e.g., Gunicorn):
+   ```bash
+   pip install gunicorn
+   gunicorn -w 4 -b 0.0.0.0:5000 'app:create_app()'
+   ```
+
+3. **Use a production database** (PostgreSQL, MySQL) instead of SQLite
+
+4. **Enable HTTPS** with a reverse proxy (nginx, Apache)
+
+5. **Set proper file permissions** for uploads directory
+
+6. **Configure firewall** and security groups appropriately
+
 ## Security Considerations
 
 - Passwords are hashed using Werkzeug's security utilities
 - File uploads are validated and sanitized
 - Session management via Flask-Login
 - CSRF protection recommended for production
+- Never use default SECRET_KEY in production
 
 ## Contributing
 

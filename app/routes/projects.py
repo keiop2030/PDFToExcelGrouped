@@ -5,6 +5,7 @@ from app import db
 from app.models import Project, PDFFile
 from app.pdf_processor import PDFProcessor
 import os
+import shutil
 from datetime import datetime
 
 bp = Blueprint('projects', __name__, url_prefix='/projects')
@@ -143,7 +144,6 @@ def delete_project(project_id):
     # Delete associated files
     project_folder = os.path.join(current_app.config['UPLOAD_FOLDER'], str(project_id))
     if os.path.exists(project_folder):
-        import shutil
         shutil.rmtree(project_folder)
     
     db.session.delete(project)
@@ -221,7 +221,6 @@ def api_delete_project(project_id):
     # Delete associated files
     project_folder = os.path.join(current_app.config['UPLOAD_FOLDER'], str(project_id))
     if os.path.exists(project_folder):
-        import shutil
         shutil.rmtree(project_folder)
     
     db.session.delete(project)
