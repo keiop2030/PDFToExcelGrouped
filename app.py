@@ -197,15 +197,14 @@ def webhook():
     sig_header = request.headers.get('Stripe-Signature')
     webhook_secret = os.getenv('STRIPE_WEBHOOK_SECRET')
     
+    if not webhook_secret:
+        # Webhook signature verification is required for security
+        return jsonify({'error': 'Webhook secret not configured'}), 500
+    
     try:
-        if webhook_secret:
-            event = stripe.Webhook.construct_event(
-                payload, sig_header, webhook_secret
-            )
-        else:
-            event = stripe.Event.construct_from(
-                request.get_json(), stripe.api_key
-            )
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, webhook_secret
+        )
     except ValueError:
         return jsonify({'error': 'Invalid payload'}), 400
     except stripe.error.SignatureVerificationError:
@@ -262,4 +261,6 @@ def init_db():
 
 if __name__ == '__main__':
     init_db()
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    # Debug mode should only be enabled in development
+    debug_mode = os.getenv('FLASK_ENV', 'production') == 'development'
+    app.run(debug=debug_mode, host='127.0.0.1', port=5000)
