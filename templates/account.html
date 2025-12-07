@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Account - PDF to Excel Grouped{% endblock %}
+
+{% block content %}
+<div class="row mt-5">
+    <div class="col-md-8 mx-auto">
+        <h1 class="mb-4">Account Settings</h1>
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Account Information</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Email:</strong> {{ current_user.email }}</p>
+                        <p><strong>Member Since:</strong> {{ current_user.created_at.strftime('%B %d, %Y') }}</p>
+                        <p><strong>Account Age:</strong> {{ current_user.account_age_days() }} days</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p>
+                            <strong>Account Status:</strong>
+                            {% if current_user.subscription_status == 'active' %}
+                                <span class="badge bg-success">Active Subscription</span>
+                            {% elif current_user.account_age_days() <= 30 %}
+                                <span class="badge bg-info">Free Trial</span>
+                            {% else %}
+                                <span class="badge bg-warning">Subscription Required</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {% if current_user.subscription_status == 'active' %}
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Subscription Details</h5>
+                <p><strong>Status:</strong> <span class="badge bg-success">Active</span></p>
+                {% if current_user.subscription_start_date %}
+                    <p><strong>Started:</strong> {{ current_user.subscription_start_date.strftime('%B %d, %Y') }}</p>
+                {% endif %}
+                {% if current_user.subscription_end_date %}
+                    <p><strong>Next Billing Date:</strong> {{ current_user.subscription_end_date.strftime('%B %d, %Y') }}</p>
+                {% endif %}
+                <p><strong>Amount:</strong> $30/month</p>
+                
+                <hr>
+                
+                <form method="POST" action="{{ url_for('cancel_subscription') }}" onsubmit="return confirm('Are you sure you want to cancel your subscription?');">
+                    <button type="submit" class="btn btn-danger">Cancel Subscription</button>
+                </form>
+                <p class="text-muted mt-2">
+                    <small>You will continue to have access until the end of your current billing period.</small>
+                </p>
+            </div>
+        </div>
+        {% elif current_user.account_age_days() <= 30 %}
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Free Trial</h5>
+                <p>You have {{ 30 - current_user.account_age_days() }} days remaining in your free trial.</p>
+                <a href="{{ url_for('subscribe') }}" class="btn btn-primary">Subscribe Now - $30/month</a>
+            </div>
+        </div>
+        {% else %}
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Subscription Required</h5>
+                <p>Your free trial has ended. Subscribe to continue using the service.</p>
+                <a href="{{ url_for('subscribe') }}" class="btn btn-primary">Subscribe Now - $30/month</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
