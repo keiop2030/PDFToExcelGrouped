@@ -205,8 +205,9 @@ The application uses the following default configuration:
 
 For production deployments, ensure the following:
 
-1. **Set a secure SECRET_KEY**: 
+1. **Set environment variables**:
    ```bash
+   export FLASK_ENV=production
    export SECRET_KEY=$(python -c 'import secrets; print(secrets.token_hex(32))')
    ```
 
