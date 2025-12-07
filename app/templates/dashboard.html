@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <h1>Welcome, {{ current_user.username }}!</h1>
+    
+    <div class="dashboard-stats">
+        <div class="stat-card">
+            <h3>Total Projects</h3>
+            <p class="stat-number">{{ total_projects }}</p>
+        </div>
+    </div>
+
+    <div class="dashboard-section">
+        <div class="section-header">
+            <h2>Recent Projects</h2>
+            <a href="{{ url_for('projects.create_project') }}" class="btn btn-primary">Create New Project</a>
+        </div>
+
+        {% if projects %}
+            <div class="project-list">
+                {% for project in projects %}
+                    <div class="project-card">
+                        <h3><a href="{{ url_for('projects.view_project', project_id=project.id) }}">{{ project.name }}</a></h3>
+                        <p>{{ project.description or 'No description' }}</p>
+                        <div class="project-meta">
+                            <span>{{ project.pdf_files|length }} files</span>
+                            <span>Updated: {{ project.updated_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <a href="{{ url_for('projects.list_projects') }}" class="btn btn-secondary">View All Projects</a>
+        {% else %}
+            <p class="empty-state">No projects yet. <a href="{{ url_for('projects.create_project') }}">Create your first project</a></p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

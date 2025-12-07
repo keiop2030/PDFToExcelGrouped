@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}{{ project.name }}{% endblock %}
+
+{% block content %}
+<div class="project-detail">
+    <div class="project-header">
+        <div>
+            <h1>{{ project.name }}</h1>
+            <p class="project-description">{{ project.description or 'No description' }}</p>
+            <div class="project-meta">
+                <span>Created: {{ project.created_at.strftime('%Y-%m-%d') }}</span>
+                <span>Updated: {{ project.updated_at.strftime('%Y-%m-%d %H:%M') }}</span>
+            </div>
+        </div>
+        <a href="{{ url_for('projects.list_projects') }}" class="btn btn-secondary">Back to Projects</a>
+    </div>
+
+    <div class="upload-section">
+        <h2>Upload PDF File</h2>
+        <form method="POST" action="{{ url_for('projects.upload_file', project_id=project.id) }}" enctype="multipart/form-data" class="upload-form">
+            <div class="form-group">
+                <input type="file" name="file" accept=".pdf" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Upload and Process</button>
+        </form>
+    </div>
+
+    <div class="files-section">
+        <h2>Uploaded Files</h2>
+        {% if project.pdf_files %}
+            <table class="files-table">
+                <thead>
+                    <tr>
+                        <th>Filename</th>
+                        <th>Status</th>
+                        <th>Uploaded</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for file in project.pdf_files %}
+                        <tr>
+                            <td>{{ file.original_filename }}</td>
+                            <td>
+                                <span class="status-badge status-{{ file.status }}">{{ file.status }}</span>
+                                {% if file.error_message %}
+                                    <br><small class="error-text">{{ file.error_message }}</small>
+                                {% endif %}
+                            </td>
+                            <td>{{ file.uploaded_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                            <td>
+                                {% if file.status == 'completed' and file.excel_path %}
+                                    <a href="{{ url_for('projects.download_file', file_id=file.id) }}" class="btn btn-success btn-small">Download Excel</a>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="empty-state">No files uploaded yet. Upload a PDF to get started.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
